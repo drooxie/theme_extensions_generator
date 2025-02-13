@@ -19,10 +19,6 @@ void main() {
     });
   });
 
-
-
-
-
   group('Templates.generateLerp', () {
     test('Templates.generateLerp Color', () {
       var t = Templates.generateLerp(DataType('Color'), 'a', 'b', false);
@@ -35,10 +31,6 @@ void main() {
       expect(t, equals('Offset.lerp(a, b, t)!'));
     });
   });
-
-
-
-
 
   group('Templates.generateConstructorParameters', () {
     test('Templates.generateConstructorParameters Required', () {
@@ -72,10 +64,6 @@ void main() {
       expect(t, equals('{required this.backgroundColor,this.foregroundColor,required this.padding,}'));
     });
   });
-
-
-
-
 
   group('Templates.generateMethodParameters', () {
     test('Templates.generateMethodParameters Not nullable', () {
@@ -100,10 +88,6 @@ void main() {
     });
   });
 
-
-
-
-
   group('Templates.generateConstructorParameters', () {
     test('Templates.generateConstructorParameters Required', () {
       List<Parameter> p = [
@@ -137,10 +121,6 @@ void main() {
     });
   });
 
-
-
-
-
   group('Templates.generateClassFields', () {
     test('Templates.generateClassFields Not nullable', () {
       List<Parameter> p = [
@@ -164,10 +144,6 @@ void main() {
     });
   });
 
-
-
-
-
   group('Templates.generateConstructor', () {
     test('Templates.generateConstructor TestType', () {
       DataType type = DataType('TestType');
@@ -182,10 +158,6 @@ void main() {
     });
   });
 
-
-
-
-
   group('Templates.generateCopyWithMethod', () {
     test('Templates.generateCopyWithMethod TestType', () {
       DataType type = DataType('TestType');
@@ -196,13 +168,12 @@ void main() {
       ];
       var t = Templates.generateCopyWithMethod(type, p);
       print(t);
-      expect(t, equals('TestType copyWith({Color? backgroundColor,Color? foregroundColor,double? padding,}) => TestType(backgroundColor: backgroundColor ?? this.backgroundColor,foregroundColor: foregroundColor ?? this.foregroundColor,padding: padding ?? this.padding,);'));
+      expect(
+          t,
+          equals(
+              'TestType copyWith({Color? backgroundColor,Color? foregroundColor,double? padding,}) => TestType(backgroundColor: backgroundColor ?? this.backgroundColor,foregroundColor: foregroundColor ?? this.foregroundColor,padding: padding ?? this.padding,);'));
     });
   });
-
-
-
-
 
   group('Templates.generateCopyWithDecorationMethod', () {
     test('Templates.generateCopyWithDecorationMethod TestType', () {
@@ -215,13 +186,12 @@ void main() {
       ];
       var t = Templates.generateCopyWithDecorationMethod(type, decorationType, p);
       print(t);
-      expect(t, equals('TestType copyWithDecoration(TestTypeDecoration? decoration) => decoration != null? TestType(backgroundColor: decoration.backgroundColor ?? this.backgroundColor,foregroundColor: decoration.foregroundColor ?? this.foregroundColor,padding: decoration.padding ?? this.padding,) : this;'));
+      expect(
+          t,
+          equals(
+              'TestType copyWithDecoration(TestTypeDecoration? decoration) => decoration != null? TestType(backgroundColor: decoration.backgroundColor ?? this.backgroundColor,foregroundColor: decoration.foregroundColor ?? this.foregroundColor,padding: decoration.padding ?? this.padding,) : this;'));
     });
   });
-
-
-
-
 
   group('Templates.generateLerpMethod', () {
     test('Templates.generateLerpMethod TestType', () {
@@ -241,7 +211,8 @@ void main() {
         Parameter('testType', DataType('TestType'), true, true),
       ];
 
-      var l = LerpGenerator()..addLerpTypename(TransformModel.withNamespace(DataType('TestType'), DataType('_TestType')));
+      var l = LerpGenerator()
+        ..addLerpTypename(TransformModel.withNamespace(DataType('TestType'), DataType('_TestType')));
 
       var t = Templates.generateLerpMethod(type, p, l);
       print(t);
@@ -253,15 +224,12 @@ void main() {
         Parameter('testType', DataType('TestType'), true, true),
       ];
 
-      var l = LerpGenerator()..addTweenTypename(TransformModel.withNamespace(DataType('TestType'), DataType('_TestType')));
+      var l = LerpGenerator()
+        ..addTweenTypename(TransformModel.withNamespace(DataType('TestType'), DataType('_TestType')));
 
       var t = Templates.generateLerpMethod(type, p, l);
       print(t);
     });
-
-
-
-
 
     group('Templates.generateDecorationClass', () {
       test('Templates.generateDecorationClass TestTypeDecoration', () {
@@ -273,20 +241,18 @@ void main() {
         ];
         var t = Templates.generateDecorationClass(type, p);
         print(t);
-        expect(t, allOf([
-          contains('class TestTypeDecoration'),
-          contains('{'),
-          contains('final Color? backgroundColor;final Color? foregroundColor;final double? padding;'),
-          contains('const TestTypeDecoration({this.backgroundColor,this.foregroundColor,this.padding,});'),
-          contains('}')
-        ]));
+        expect(
+            t,
+            allOf([
+              contains('class TestTypeDecoration'),
+              contains('{'),
+              contains('final Color? backgroundColor;final Color? foregroundColor;final double? padding;'),
+              contains('const TestTypeDecoration({this.backgroundColor,this.foregroundColor,this.padding,});'),
+              contains('}')
+            ]));
       });
     });
   });
-
-
-
-
 
   group('Templates.generateMainClass', () {
     test('Templates.generateMainClass TestTypeTheme', () {
@@ -302,21 +268,19 @@ void main() {
       var l = LerpGenerator();
       var t = Templates.generateMainClass(type, parentType, decorationType, p, l);
       print(t);
-      expect(t, allOf([
-        contains('class TestTypeTheme implements TestType'),
-        contains('{'),
-        contains(Templates.generateConstructor(type, p)),
-        contains(Templates.generateCopyWithMethod(type, p)),
-        contains(Templates.generateCopyWithDecorationMethod(type, decorationType, p)),
-        contains(Templates.generateLerpMethod(parentType, p, l)),
-        contains('}')
-      ]));
+      expect(
+          t,
+          allOf([
+            contains('class TestTypeTheme implements TestType'),
+            contains('{'),
+            contains(Templates.generateConstructor(type, p)),
+            contains(Templates.generateCopyWithMethod(type, p)),
+            contains(Templates.generateCopyWithDecorationMethod(type, decorationType, p)),
+            contains(Templates.generateLerpMethod(parentType, p, l)),
+            contains('}')
+          ]));
     });
   });
-
-
-
-
 
   group('Templates.generateMixinGetters', () {
     test('Templates.generateMixinGetters', () {
@@ -329,11 +293,13 @@ void main() {
 
       var t = Templates.generateMixinGetters(p, errorName);
       print(t);
-      expect(t, allOf([
-        contains('Color? get backgroundColor => throw Error'),
-        contains('Color? get foregroundColor => throw Error'),
-        contains('double get padding => throw Error')
-      ]));
+      expect(
+          t,
+          allOf([
+            contains('Color? get backgroundColor => throw Error'),
+            contains('Color? get foregroundColor => throw Error'),
+            contains('double get padding => throw Error')
+          ]));
     });
   });
 
@@ -349,16 +315,14 @@ void main() {
 
       var t = Templates.generateMixinCopyWithMethod(type, p, errorName);
       print(t);
-      expect(t, allOf([
-        contains('TestType'),
-        contains('copyWith({Color? backgroundColor,Color? foregroundColor,double? padding,}) => throw Error'),
-      ]));
+      expect(
+          t,
+          allOf([
+            contains('TestType'),
+            contains('copyWith({Color? backgroundColor,Color? foregroundColor,double? padding,}) => throw Error'),
+          ]));
     });
   });
-
-
-
-
 
   group('Templates.generateMixinCopyWithDecorationMethod', () {
     test('Templates.generateMixinCopyWithDecorationMethod TestType', () {
@@ -373,16 +337,14 @@ void main() {
 
       var t = Templates.generateMixinCopyWithDecorationMethod(type, decorationType, p, errorName);
       print(t);
-      expect(t, allOf([
-        contains('TestType'),
-        contains('copyWithDecoration(TestTypeDecoration? decoration) => throw Error'),
-      ]));
+      expect(
+          t,
+          allOf([
+            contains('TestType'),
+            contains('copyWithDecoration(TestTypeDecoration? decoration) => throw Error'),
+          ]));
     });
   });
-
-
-
-
 
   group('Templates.generateMixin', () {
     test('Templates.generateMixin TestType', () {
@@ -397,19 +359,19 @@ void main() {
 
       var t = Templates.generateMixin(type, parentType, decorationType, p, LerpGenerator());
       print(t);
-      expect(t, allOf([
-        contains('_TestTypePrivateConstructorUsedError'),
-        contains('mixin _\$TestType'),
-        contains(Templates.generateMixinGetters(p, '_TestTypePrivateConstructorUsedError')),
-        contains(Templates.generateMixinCopyWithDecorationMethod(parentType, decorationType, p, '_TestTypePrivateConstructorUsedError')),
-        contains(Templates.generateMixinCopyWithDecorationMethod(parentType, decorationType, p, '_TestTypePrivateConstructorUsedError'))
-      ]));
+      expect(
+          t,
+          allOf([
+            contains('_TestTypePrivateConstructorUsedError'),
+            contains('mixin _\$TestType'),
+            contains(Templates.generateMixinGetters(p, '_TestTypePrivateConstructorUsedError')),
+            contains(Templates.generateMixinCopyWithDecorationMethod(
+                parentType, decorationType, p, '_TestTypePrivateConstructorUsedError')),
+            contains(Templates.generateMixinCopyWithDecorationMethod(
+                parentType, decorationType, p, '_TestTypePrivateConstructorUsedError'))
+          ]));
     });
   });
-
-
-
-
 
   group('Templates.generateThemeExtension', () {
     test('Templates.generateThemeExtension TestType', () {
@@ -419,7 +381,7 @@ void main() {
       var l = LerpGenerator();
       l.addLerpTypename(TransformModel.withNamespace(themeType, DataType('_TestType')));
 
-      var t = Templates.generateThemeExtension(extensionType, themeType, l);
+      var t = Templates.generateThemeExtension(extensionType, themeType, l, 'supaDupaExtensionTest');
       print(t);
       // expect(t, allOf([
       //   contains('class TestTypeExtension'),

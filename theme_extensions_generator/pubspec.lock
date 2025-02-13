@@ -484,9 +484,11 @@ packages:
   theme_extensions_annotation:
     dependency: "direct main"
     description:
-      path: "../theme_extensions_annotation"
-      relative: true
-    source: path
+      path: theme_extensions_annotation
+      ref: HEAD
+      resolved-ref: "57209e4eb9b9c8a88643d2e27fe14f779dd6b922"
+      url: "https://github.com/drooxie/theme_extensions_generator.git"
+    source: git
     version: "1.0.0"
   timing:
     dependency: transitive
@@ -545,4 +547,4 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=3.0.0-134.0.dev <4.0.0"
+  dart: ">=3.4.1 <4.0.0"

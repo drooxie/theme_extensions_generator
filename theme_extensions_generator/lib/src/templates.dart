@@ -25,13 +25,11 @@ class Templates {
     return '{$e}';
   }
 
-  static String generateMethodParameters(Iterable<Parameter> parameters,
-      [bool isNullable = false]) {
+  static String generateMethodParameters(Iterable<Parameter> parameters, [bool isNullable = false]) {
     String e = '';
 
     for (var p in parameters) {
-      e +=
-          '${p.required && !isNullable ? 'required ' : ''}${p.type}${isNullable || p.nullable ? '?' : ''} ${p.name},';
+      e += '${p.required && !isNullable ? 'required ' : ''}${p.type}${isNullable || p.nullable ? '?' : ''} ${p.name},';
     }
 
     return '{$e}';
@@ -47,13 +45,11 @@ class Templates {
     return e;
   }
 
-  static String generateConstructor(
-      DataType type, Iterable<Parameter> parameters) {
+  static String generateConstructor(DataType type, Iterable<Parameter> parameters) {
     return 'const $type(${generateConstructorParameters(parameters)});';
   }
 
-  static String generateCopyWithMethod(
-      DataType type, Iterable<Parameter> parameters) {
+  static String generateCopyWithMethod(DataType type, Iterable<Parameter> parameters) {
     String e = '';
 
     for (var p in parameters) {
@@ -74,8 +70,7 @@ class Templates {
     return '$type copyWithDecoration($decorationType? decoration) => decoration != null? $type($e) : this;';
   }
 
-  static String generateLerpMethod(
-      DataType type, Iterable<Parameter> parameters, LerpGenerator generator) {
+  static String generateLerpMethod(DataType type, Iterable<Parameter> parameters, LerpGenerator generator) {
     String e = '';
 
     for (var p in parameters) {
@@ -86,12 +81,10 @@ class Templates {
       if (p.allowLerp) {
         if (type is LerpGeneratorResultFound) {
           if (type.state == TransformState.tween && !p.nullable) {
-            e +=
-                '${generateTween(type.namespaceType, 'a.${p.name}', 'b.${p.name}')},';
+            e += '${generateTween(type.namespaceType, 'a.${p.name}', 'b.${p.name}')},';
             continue;
           } else if (type.state == TransformState.lerp) {
-            e +=
-                '${generateLerp(type.namespaceType, 'a.${p.name}', 'b.${p.name}', p.nullable)},';
+            e += '${generateLerp(type.namespaceType, 'a.${p.name}', 'b.${p.name}', p.nullable)},';
             continue;
           }
         }
@@ -102,8 +95,7 @@ class Templates {
     return 'static $type? lerp($type? a, $type? b, double ${Constants.varnameTransform}) { if (a == null && b == null) return null; if (a == null) return b; if (b == null) return a; return $type($e);}';
   }
 
-  static String generateDecorationClass(
-      DataType type, Iterable<Parameter> parameters) {
+  static String generateDecorationClass(DataType type, Iterable<Parameter> parameters) {
     List<Parameter> changedParameters = [];
 
     for (var p in parameters) {
@@ -120,12 +112,8 @@ class Templates {
     }''';
   }
 
-  static String generateMainClass(
-      DataType type,
-      DataType parentType,
-      DataType decorationType,
-      Iterable<Parameter> parameters,
-      LerpGenerator generator) {
+  static String generateMainClass(DataType type, DataType parentType, DataType decorationType,
+      Iterable<Parameter> parameters, LerpGenerator generator) {
     return '''
     class $type implements $parentType {
       ${generateClassFields(parameters)}
@@ -140,37 +128,27 @@ class Templates {
     }''';
   }
 
-  static String generateMixinGetters(
-      Iterable<Parameter> parameters, String errorName) {
+  static String generateMixinGetters(Iterable<Parameter> parameters, String errorName) {
     String e = '';
 
     for (var p in parameters) {
-      e +=
-          '${p.type}${p.nullable ? '?' : ''} get ${p.name} => throw $errorName;';
+      e += '${p.type}${p.nullable ? '?' : ''} get ${p.name} => throw $errorName;';
     }
 
     return e;
   }
 
-  static String generateMixinCopyWithMethod(
-      DataType parentType, Iterable<Parameter> parameters, String errorName) {
+  static String generateMixinCopyWithMethod(DataType parentType, Iterable<Parameter> parameters, String errorName) {
     return '$parentType copyWith(${generateMethodParameters(parameters, true)}) => throw $errorName;';
   }
 
   static String generateMixinCopyWithDecorationMethod(
-      DataType parentType,
-      DataType decorationType,
-      Iterable<Parameter> parameters,
-      String errorName) {
+      DataType parentType, DataType decorationType, Iterable<Parameter> parameters, String errorName) {
     return '$parentType copyWithDecoration($decorationType? decoration) => throw $errorName;';
   }
 
-  static String generateMixin(
-      DataType type,
-      DataType parentType,
-      DataType decorationType,
-      Iterable<Parameter> parameters,
-      LerpGenerator generator) {
+  static String generateMixin(DataType type, DataType parentType, DataType decorationType,
+      Iterable<Parameter> parameters, LerpGenerator generator) {
     String errorName = '_${parentType.name}PrivateConstructorUsedError';
     return '''
     
@@ -187,13 +165,16 @@ class Templates {
   }
 
   static String generateThemeExtension(
-      DataType extensionType, DataType themeType, LerpGenerator generator) {
+    DataType extensionType,
+    DataType themeType,
+    LerpGenerator generator,
+    String? extensionGetterName,
+  ) {
     var lerpType = generator.transformFunction(themeType);
 
-    if (lerpType is! LerpGeneratorResultFound)
-      throw UnsupportedError('Theme class not registered in lerpGenerator');
+    if (lerpType is! LerpGeneratorResultFound) throw UnsupportedError('Theme class not registered in lerpGenerator');
 
-    var extensionGetterName = extensionType.name[0].toLowerCase() + extensionType.name.substring(1);
+    extensionGetterName ??= extensionType.name[0].toLowerCase() + extensionType.name.substring(1);
 
     return '''
     

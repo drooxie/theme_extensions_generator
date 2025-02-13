@@ -13,33 +13,25 @@ import 'models.dart';
 import 'templates.dart';
 
 class ThemeExtensionGenerator extends GeneratorForAnnotation<ThemeExtended> {
-  void forEachField(
-      Map<ParameterElement, List<ElementAnnotation>> fields,
-      Map<
-              String,
-              void Function(String type, String varname,
-                  ParameterElement element, DartObject? computeObject)>
-          on) {
+  void forEachField(Map<ParameterElement, List<ElementAnnotation>> fields,
+      Map<String, void Function(String type, String varname, ParameterElement element, DartObject? computeObject)> on) {
     for (var f in fields.entries) {
       if (fields[f.key]!.isEmpty && on.containsKey('null')) {
-        on['null']!(f.key.type.getDisplayString(withNullability: false),
-            f.key.name, f.key, null);
+        on['null']!(f.key.type.getDisplayString(withNullability: false), f.key.name, f.key, null);
       }
 
       for (var m in fields[f.key]!) {
         var name = m.toSource();
         name = name.replaceRange(name.indexOf('(') + 1, name.length - 1, '');
         if (on.containsKey(name)) {
-          on[name]!(f.key.type.getDisplayString(withNullability: false),
-              f.key.name, f.key, m.computeConstantValue());
+          on[name]!(f.key.type.getDisplayString(withNullability: false), f.key.name, f.key, m.computeConstantValue());
           break;
         }
       }
     }
   }
 
-  Map<ParameterElement, List<ElementAnnotation>> inspectConstructor(
-      ConstructorElement element) {
+  Map<ParameterElement, List<ElementAnnotation>> inspectConstructor(ConstructorElement element) {
     Map<ParameterElement, List<ElementAnnotation>> inspect = {};
 
     for (var e in element.children) {
@@ -50,57 +42,32 @@ class ThemeExtensionGenerator extends GeneratorForAnnotation<ThemeExtended> {
     return inspect;
   }
 
-  List<Parameter> parseFields(
-      Map<ParameterElement, List<ElementAnnotation>> parameters,
-      LerpGenerator generator) {
+  List<Parameter> parseFields(Map<ParameterElement, List<ElementAnnotation>> parameters, LerpGenerator generator) {
     List<Parameter> p = [];
     forEachField(parameters, {
       '@ThemeProperty()': (t, v, e, c) {
-        p.add(Parameter(
-            v,
-            DataType(t),
-            e.type.nullabilitySuffix == NullabilitySuffix.question,
-            e.isRequiredNamed,
+        p.add(Parameter(v, DataType(t), e.type.nullabilitySuffix == NullabilitySuffix.question, e.isRequiredNamed,
             annotation: ParameterAnnotation.themeParameter));
       },
       '@ThemeProperty.styled()': (t, v, e, c) {
-        generator.addLerpTypename(
-            TransformModel.withNamespace(DataType(t), DataType('_$t')));
-        p.add(Parameter(
-            v,
-            DataType(t),
-            e.type.nullabilitySuffix == NullabilitySuffix.question,
-            e.isRequiredNamed,
+        generator.addLerpTypename(TransformModel.withNamespace(DataType(t), DataType('_$t')));
+        p.add(Parameter(v, DataType(t), e.type.nullabilitySuffix == NullabilitySuffix.question, e.isRequiredNamed,
             annotation: ParameterAnnotation.styleParameter));
       },
       '@ThemeProperty.lerp()': (t, v, e, c) {
         var targetType = c!.getField('targetType')!.toStringValue();
-        generator.addLerpTypename(
-            TransformModel.withNamespace(DataType(t), DataType(targetType!)));
-        p.add(Parameter(
-            v,
-            DataType(t),
-            e.type.nullabilitySuffix == NullabilitySuffix.question,
-            e.isRequiredNamed,
+        generator.addLerpTypename(TransformModel.withNamespace(DataType(t), DataType(targetType!)));
+        p.add(Parameter(v, DataType(t), e.type.nullabilitySuffix == NullabilitySuffix.question, e.isRequiredNamed,
             annotation: ParameterAnnotation.styleParameter));
       },
       '@ThemeProperty.tween()': (t, v, e, c) {
         var targetType = c!.getField('targetType')!.toStringValue();
-        generator.addTweenTypename(
-            TransformModel.withNamespace(DataType(t), DataType(targetType!)));
-        p.add(Parameter(
-            v,
-            DataType(t),
-            e.type.nullabilitySuffix == NullabilitySuffix.question,
-            e.isRequiredNamed,
+        generator.addTweenTypename(TransformModel.withNamespace(DataType(t), DataType(targetType!)));
+        p.add(Parameter(v, DataType(t), e.type.nullabilitySuffix == NullabilitySuffix.question, e.isRequiredNamed,
             annotation: ParameterAnnotation.styleParameter));
       },
       'null': (t, v, e, c) {
-        p.add(Parameter(
-            v,
-            DataType(t),
-            e.type.nullabilitySuffix == NullabilitySuffix.question,
-            e.isRequiredNamed,
+        p.add(Parameter(v, DataType(t), e.type.nullabilitySuffix == NullabilitySuffix.question, e.isRequiredNamed,
             allowLerp: false));
       }
     });
@@ -132,31 +99,27 @@ class ThemeExtensionGenerator extends GeneratorForAnnotation<ThemeExtended> {
     var extensionType = DataType('${classImpl.name}Extension');
 
     var lerpGenerator = LerpGenerator();
-    var parameters =
-        parseFields(inspectConstructor(constructorImpl), lerpGenerator);
+    var parameters = parseFields(inspectConstructor(constructorImpl), lerpGenerator);
 
-    var annotationType = annotation.objectValue
-        .getField('type')!
-        .getField('_name')!
-        .toStringValue();
+    var annotationType = annotation.objectValue.getField('type')!.getField('_name')!.toStringValue();
+    var extensionGetterName = annotation.objectValue.getField('extensionGetterName')!.toStringValue();
 
     if (annotationType == 'themeOnly') {
-      result += Templates.generateMixin(
-          mixinType, targetType, decorationType, parameters, lerpGenerator);
-      result += Templates.generateMainClass(implementationType, targetType,
-          decorationType, parameters, lerpGenerator);
+      result += Templates.generateMixin(mixinType, targetType, decorationType, parameters, lerpGenerator);
+      result += Templates.generateMainClass(implementationType, targetType, decorationType, parameters, lerpGenerator);
       result += Templates.generateDecorationClass(decorationType, parameters);
     } else if (annotationType == 'full') {
-      result += Templates.generateMixin(
-          mixinType, targetType, decorationType, parameters, lerpGenerator);
-      result += Templates.generateMainClass(implementationType, targetType,
-          decorationType, parameters, lerpGenerator);
+      result += Templates.generateMixin(mixinType, targetType, decorationType, parameters, lerpGenerator);
+      result += Templates.generateMainClass(implementationType, targetType, decorationType, parameters, lerpGenerator);
       result += Templates.generateDecorationClass(decorationType, parameters);
 
-      lerpGenerator.addLerpTypename(
-          TransformModel.withNamespace(targetType, implementationType));
+      lerpGenerator.addLerpTypename(TransformModel.withNamespace(targetType, implementationType));
       result += Templates.generateThemeExtension(
-          extensionType, targetType, lerpGenerator);
+        extensionType,
+        targetType,
+        lerpGenerator,
+        extensionGetterName,
+      );
     }
 
     return result;
