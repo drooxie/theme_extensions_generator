@@ -14,7 +14,7 @@ dependencies:
   source_gen: any
   theme_extensions_annotation:
     git:
-      url: https://github.com/MiiMan/theme_extensions_generator.git
+      url: https://github.com/drooxie/theme_extensions_generator.git
       path: theme_extensions_annotation
 
 dev_dependencies:
